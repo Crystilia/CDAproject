@@ -36,7 +36,7 @@ int instruction_decode(unsigned op,struct_controls *controls)
 /* 5 Points */
 void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigned *data2)
 {
-
+//Matt
 }
 
 
@@ -44,14 +44,14 @@ void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigne
 /* 10 Points */
 void sign_extend(unsigned offset,unsigned *extended_value)
 {
-
+//Matt
 }
 
 /* ALU operations */
 /* 10 Points */
 int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigned funct,char ALUOp,char ALUSrc,unsigned *ALUresult,char *Zero)
 {
-
+//Matt
 }
 
 /* Read / Write Memory */
