@@ -37,14 +37,22 @@ int instruction_decode(unsigned op,struct_controls *controls)
 void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigned *data2)
 {
 //Matt
+    //Not sure if this is how this is supposed to be done.
+    data1 = Reg[r1];    //reads the value of the register at r1 and assigns it to data1
+    data2 = Reg[r2];    //reads the value of the register at r2 and assigns it to data2
 }
-
 
 /* Sign Extend */
 /* 10 Points */
 void sign_extend(unsigned offset,unsigned *extended_value)
 {
 //Matt
+    unsigned mask = 0x8000;
+    if ((offset & mask) == 0x8000)
+    {
+      *extended_value |= 0xFFFF0000;
+    }
+    *extended_value |= offset;
 }
 
 /* ALU operations */
