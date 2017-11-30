@@ -66,7 +66,7 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
         }
 
     //Assign Zero to 1 if the result is zero; otherwise, assign 0.
-        if(*ALUresult == 0) {
+        if(*ALUresult == 0) {       //do you use *ALUresult or &ALUresult here?
             *Zero = 1;
         }
         else {
@@ -138,9 +138,8 @@ int instruction_decode(unsigned op,struct_controls *controls)
 void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigned *data2)
 {
 //Matt
-    //Not sure if this is how this is supposed to be done.
-    data1 = Reg[r1];    //reads the value of the register at r1 and assigns it to data1
-    data2 = Reg[r2];    //reads the value of the register at r2 and assigns it to data2
+    *data1 = Reg[r1];    //reads the value of the register at r1 and assigns it to data1
+    *data2 = Reg[r2];    //reads the value of the register at r2 and assigns it to data2
 }
 
 /* Sign Extend */
@@ -148,6 +147,7 @@ void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigne
 void sign_extend(unsigned offset,unsigned *extended_value)
 {
 //Matt
+//Checks the sign bit and extends accordingly
     unsigned mask = 0x8000;
     if ((offset & mask) == 0x8000)
     {
@@ -161,6 +161,46 @@ void sign_extend(unsigned offset,unsigned *extended_value)
 int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigned funct,char ALUOp,char ALUSrc,unsigned *ALUresult,char *Zero)
 {
 //Matt
+    unsigned a, b;
+    if (ALUSrc == 1)    //condition where both values are stored in a single unsigned int
+    {
+        a = (extended_value & 0xFFFF0000) >> 8; //leftmost bits of extended_value
+        b = (extended_value & 0xFFFF);  //rightmost bits of extended_value
+    }
+    else
+    {
+        a = data1;
+        b = data2;
+    }
+    switch (ALUOp)  //performs opcode cases
+    {
+        case 0b000:
+            *ALUresult = a + b;
+            break;
+        case 0b001:
+            *ALUresult = a - b;
+            break;
+        case 0b010:
+            *ALUresult = (int)a < (int)b ? 1 : 0;
+            break;
+        case 0b011:
+            *ALUresult = a < b ? 1 : 0;
+            break;
+        case 0b100:
+            *ALUresult = a & b;
+        case 0b101:
+            *ALUresult = a | b;
+        case 0b110:
+            *ALUresult = b << 16;
+        case 0b111:
+            ALU(a, b, funct, *ALUresult, *Zero);    //R-type, send to ALU()
+            return 0;
+        default:    //HALT unimplemented opcode
+            return 1;
+    }
+    //Assign Zero to 1 if the result is zero; otherwise, assign 0.
+    *Zero = &ALUresult == 0 ? 1 : 0;
+    return 0;
 }
 
 /* Read / Write Memory */
